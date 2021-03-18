@@ -1,0 +1,20 @@
+{{ define "index" }}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{.Title}}</title>
+  </head>
+  <body>
+      <form method="POST">
+          <label>User name:
+        <input name="name" id="name" type="text"/>
+    </label>
+        <input type="submit">
+      </form>
+    {{.Content}} 
+    {{ if .Blocks }} 
+    {{ range .Blocks }} {{ template "block" . }} {{ end}} 
+    {{ end}}
+  </body>
+</html>
+{{end}}

@@ -21,6 +21,11 @@ You can use it for learning purposes, nothing really productive. Just playing ..
     go build /path/to/file.go
 ```
 
+- Compile for other platform
+```
+    GOOS=windows GOARCH=amd64 go build
+```
+
 - Format code
 ```
     go fmt code.go
