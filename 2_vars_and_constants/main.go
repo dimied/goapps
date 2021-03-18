@@ -33,6 +33,27 @@ const (
 	a2 = 4
 )
 
+func variadicFunction (nums ...int) int64 {
+	var result int64
+	for _, num := range nums {
+		result += int64(num)
+	}
+
+	return result;
+}
+
+type Chain struct {
+	Sum int64
+	numberOfEntries int
+}
+
+// can create function chains
+func (chain *Chain) Add(val int) *Chain {
+	chain.Sum += int64(val)
+	chain.numberOfEntries++
+	return chain;
+}
+
 func main() {
 
 	printGlobals()
@@ -42,6 +63,14 @@ func main() {
 	printValuesAndPointers()
 
 	slicesAndArray()
+
+	r := variadicFunction(1,2,3,4)
+	fmt.Println("Sum is ", r)
+
+	c := Chain{}
+
+	c.Add(1).Add(2).Add(3)
+	fmt.Println("Sum-chain: ", c.Sum, c.numberOfEntries)
 }
 
 func printGlobals() {

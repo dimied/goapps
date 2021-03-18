@@ -1,13 +1,14 @@
 package main
 
 import (
-	"errors"
+	"./helper"
 	"fmt"
 	"html/template"
-	"net"
 	"net/http"
 	"os"
 	"strconv"
+	// go get golang.org/x/net/context
+	_ "context"
 )
 
 // Title-case, i.e. exported
@@ -34,7 +35,7 @@ func main() {
 	}
 	fmt.Println("Current dir: ", directory)
 
-	port, portError := findAvailablePort(2000, false)
+	port, portError := helper.FindAvailablePort(2000, false)
 	if portError != nil {
 		fmt.Println("Error: ", portError)
 		os.Exit(1)
@@ -82,33 +83,4 @@ func ServeIndexPage(writer http.ResponseWriter, r *http.Request) {
 		fmt.Println("Failed to fill template: ", err)
 		os.Exit(2)
 	}
-}
-
-func findAvailablePort(port uint16, verbose bool) (uint16, error) {
-
-	inputPort := port
-
-	for port < 4000 {
-		port_str := strconv.FormatUint(uint64(port), 10)
-		if verbose {
-			fmt.Println("Check port : ", port)
-		}
-
-		ln, err := net.Listen("tcp", ":"+port_str)
-
-		if err != nil {
-			port++
-			continue
-		}
-		err = ln.Close()
-
-		if err != nil {
-			port++
-			continue
-
-		}
-		// Found !
-		return port, nil
-	}
-	return inputPort, errors.New("Failed to find any port")
 }
