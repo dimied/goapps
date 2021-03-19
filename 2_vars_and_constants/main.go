@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import ("fmt"
+"encoding/json"
+)
 
 var x int
 
@@ -54,7 +56,16 @@ func (chain *Chain) Add(val int) *Chain {
 	return chain;
 }
 
+var str string
+
+// Is called before main
+func init() {
+	str = "Assigned in init"
+}
+
 func main() {
+
+	fmt.Println(str)
 
 	printGlobals()
 
@@ -63,6 +74,8 @@ func main() {
 	printValuesAndPointers()
 
 	slicesAndArray()
+
+	maps()
 
 	r := variadicFunction(1,2,3,4)
 	fmt.Println("Sum is ", r)
@@ -82,6 +95,9 @@ func printGlobals() {
 	declare_and_assign := 5 * 6
 	fmt.Println("Declared", declare_and_assign)
 	fmt.Println("Rune :", r)
+
+	fmt.Printf("x=%v, type of %T\n", x, x)
+	fmt.Printf("Rune: x=%v, type of %T\n", r, r)
 }
 
 func printString() {
@@ -141,4 +157,30 @@ func slicesAndArray() {
 	// Copy from slices, smaller destination slice won't be resized
 	copy(slice3, slice2[4:8])
 	fmt.Println("Slice3: ", slice3, "len = ", len(slice3), "cap = ", cap(slice3))
+}
+
+func maps() {
+	m1 := map[int]int{1:1, 2:4}
+	fmt.Println("Map: ", m1)
+
+	var lookup map[int]string
+	lookup = make(map[int]string,2)
+	lookup[1] = "one"
+	lookup[3] = "three"
+
+	fmt.Println("Map2: ", lookup)
+
+	delete(lookup, 3)
+	delete(lookup, 2)
+	fmt.Println("Map2:after delete: ", lookup)
+
+	// comma-ok notation
+	value, ok := lookup[100]
+	if !ok {
+		fmt.Println("Value not found for ", 100)
+		fmt.Println("Value = ", value)
+	}
+
+	asJson, _ := json.Marshal(lookup)
+	fmt.Println("Map2:json: ", string(asJson))
 }
