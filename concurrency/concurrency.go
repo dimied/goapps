@@ -73,6 +73,9 @@ func main() {
 	fmt.Print("\nBuffered\n\n")
 	bufferedChannel(4, 10, time.Microsecond*2)
 
+	fmt.Print("\nChannels and range\n\n")
+	channelsWithRangeFunc()
+
 	fmt.Print("\nIn-Out\n\n")
 	inAndOutChannels()
 
@@ -108,6 +111,21 @@ func bufferedChannel(size int, numRoutines int, sleepTime time.Duration) {
 	for i := 0; i < numRoutines; i++ {
 		fmt.Println("Buffered: Receiving value from ", <-c)
 		time.Sleep(sleepTime)
+	}
+}
+
+func channelsWithRangeFunc() {
+	ch := make(chan int)
+
+	go func() {
+		for i:= 0; i < 5; i++ {
+			ch <- i
+		}
+		close(ch)
+	}()	
+
+	for v:= range ch {
+		fmt.Println("Received: ", v)
 	}
 }
 
