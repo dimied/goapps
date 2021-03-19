@@ -63,23 +63,23 @@ func main() {
 	// define maximal number of proce
 	runtime.GOMAXPROCS(4)
 
-	fmt.Println("Simple test\n")
+	fmt.Print("\nSimple test\n\n")
 	simpleGoRoutineTest()
 
-	fmt.Println("Unbuffered\n")
+	fmt.Print("\nUnbuffered\n\n")
 	unbufferedChannel()
 	time.Sleep(time.Microsecond * 500)
 
-	fmt.Println("\nBuffered\n")
+	fmt.Print("\nBuffered\n\n")
 	bufferedChannel(4, 10, time.Microsecond*2)
 
-	fmt.Println("\nIn-Out\n")
+	fmt.Print("\nIn-Out\n\n")
 	inAndOutChannels()
 
-	fmt.Println("\nFan-In pattern\n")
+	fmt.Print("\nFan-In pattern\n\n")
 	fanIn()
 
-	fmt.Println("\nFan-Out pattern\n")
+	fmt.Print("\nFan-Out pattern\n\n")
 	fanOut()
 }
 
