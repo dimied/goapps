@@ -33,6 +33,16 @@ func newDatabase(dbname string, user string, password string) (*PgDb, error) {
 	}, nil
 }
 
+func DeleteByName(db *PgDb, name string) (bool, error) {
+	res, err := db.DB.Exec("DELETE FROM info WHERE name = $1", name)
+	if err != nil {
+		return false, err
+	}
+	affected, _ := res.RowsAffected();
+	
+	return affected>0, nil
+}
+
 func InsertIntoTable(db *PgDb, name string) (int, error) {
 	var id int
 
@@ -107,7 +117,5 @@ func main() {
 		 for _, val := range entries {
 			 fmt.Println("Entry: ", val)
 		 }
-	 }
-	
-	
+	 }	
 }

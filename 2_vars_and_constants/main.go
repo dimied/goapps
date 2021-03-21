@@ -1,7 +1,10 @@
 package main
 
-import ("fmt"
-"encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"strconv"
 )
 
 var x int
@@ -35,17 +38,35 @@ const (
 	a2 = 4
 )
 
-func variadicFunction (nums ...int) int64 {
+func variadicFunction(nums ...int) int64 {
 	var result int64
 	for _, num := range nums {
 		result += int64(num)
 	}
 
-	return result;
+	return result
+}
+
+type Val struct {
+	a int
+}
+
+func (v Val) asString() string {
+	return strconv.Itoa(v.a)
+}
+
+// using struct embedding
+type ValSquared struct {
+	Val
+}
+
+// "Overwrite"
+func (v ValSquared) asString() string {
+	return strconv.Itoa(v.a*v.a)
 }
 
 type Chain struct {
-	Sum int64
+	Sum             int64
 	numberOfEntries int
 }
 
@@ -53,7 +74,7 @@ type Chain struct {
 func (chain *Chain) Add(val int) *Chain {
 	chain.Sum += int64(val)
 	chain.numberOfEntries++
-	return chain;
+	return chain
 }
 
 var str string
@@ -63,10 +84,46 @@ func init() {
 	str = "Assigned in init"
 }
 
+var (
+	MyError = errors.New("My error")
+)
+
+type MyCustomError struct {
+	code int
+	msg string
+}
+
+// now it can be used for output as string
+func (err MyCustomError) Error() string {
+	return "Error: "+err.msg+"Code: "+strconv.Itoa(err.code)
+}
+
 func main() {
 
 	fmt.Println(str)
 
+	v := Val{2}
+	vs := ValSquared{Val{2}}
+
+	fmt.Println("Normal ", v.asString())
+	fmt.Println("Embedded ", vs.asString())
+
+	fmt.Println("Error: ", MyError)
+	customErr := MyCustomError{}
+	customErr.code = 1
+	customErr.msg = "Bla bla"
+	fmt.Println("Error: ", customErr)
+
+	// Using maps as sets, no value, we are only interested in keys
+	mySet := make(map[string]struct{})
+	mySet["Hallo"] = struct{}{}
+	mySet["Hallo du da"] = struct{}{}
+	mySet["Hallo"] = struct{}{}
+	fmt.Println("My first set", mySet)
+
+	_, ok := mySet["Hallo"]
+	fmt.Println("Element found ", ok)
+	
 	printGlobals()
 
 	printString()
@@ -77,13 +134,41 @@ func main() {
 
 	maps()
 
-	r := variadicFunction(1,2,3,4)
+	r := variadicFunction(1, 2, 3, 4)
 	fmt.Println("Sum is ", r)
 
 	c := Chain{}
 
 	c.Add(1).Add(2).Add(3)
 	fmt.Println("Sum-chain: ", c.Sum, c.numberOfEntries)
+
+	//Anonymous structs
+	a := struct {
+		b string
+		c int
+	}{"a", 1}
+	fmt.Println("Anonymous structs: ", a)
+
+	sum := 0
+
+MyLabel:
+	for i := 0; i < 10; i++ {
+		if i > 6 {
+			break MyLabel
+		}
+		sum += i
+	}
+	fmt.Println("Sum: ", sum)
+
+	fmt.Println("Named return value", lastValueReturn(6))
+	fmt.Println("Named return value", lastValueReturn(3))
+}
+
+func lastValueReturn(v int) (r int) {
+	if r = v % 2; r > 0 {
+		r = 1
+	}
+	return // here r is returned
 }
 
 func printGlobals() {
@@ -160,11 +245,11 @@ func slicesAndArray() {
 }
 
 func maps() {
-	m1 := map[int]int{1:1, 2:4}
+	m1 := map[int]int{1: 1, 2: 4}
 	fmt.Println("Map: ", m1)
 
 	var lookup map[int]string
-	lookup = make(map[int]string,2)
+	lookup = make(map[int]string, 2)
 	lookup[1] = "one"
 	lookup[3] = "three"
 

@@ -6,8 +6,10 @@ import (
 
 type pipeFunc func(in <-chan int) <-chan int
 
+var channelSize = 50
+
 func generator(max int) <-chan int {
-	outChInt := make(chan int, 100)
+	outChInt := make(chan int, channelSize)
 
 	go func() {
 		for i := 1; i <= max; i++ {
@@ -21,7 +23,7 @@ func generator(max int) <-chan int {
 }
 
 func add2(in <-chan int) <-chan int {
-	out := make(chan int, 100)
+	out := make(chan int, channelSize)
 
 	go func() {
 		for v := range in {
@@ -34,7 +36,7 @@ func add2(in <-chan int) <-chan int {
 }
 
 func power(in <-chan int, pow int) <-chan int {
-	out := make(chan int, 100)
+	out := make(chan int, channelSize)
 
 	go func() {
 		for v := range in {
@@ -57,7 +59,7 @@ func power2(in <-chan int) <-chan int {
 }
 
 func sum(in <-chan int) <-chan int {
-	out := make(chan int, 100)
+	out := make(chan int)
 
 	go func() {
 		var sum int
@@ -73,12 +75,12 @@ func sum(in <-chan int) <-chan int {
 	return out
 }
 
-func ExecuteInPipeline(amount int) int {
+func ExecuteInPipeline(amount int, pow int) int {
 	firstCh := generator(amount)
-	powerCh := power(firstCh, 2)
-	thirdCh := sum(powerCh)
+	powerCh := power(firstCh, pow)
+	sumCh := sum(powerCh)
 
-	result := <-thirdCh
+	result := <-sumCh
 
 	return result
 }
@@ -91,9 +93,9 @@ func ExecuteInOrder(amount int, funcs ...pipeFunc) int {
 		ch = f(ch)
 	}
 
-	thirdCh := sum(ch)
+	resultCh := sum(ch)
 
-	result := <-thirdCh
+	result := <-resultCh
 
 	return result
 }
@@ -101,7 +103,7 @@ func ExecuteInOrder(amount int, funcs ...pipeFunc) int {
 func main() {
 	fmt.Println("Pipeline design pattern")
 
-	res := ExecuteInPipeline(50)
+	res := ExecuteInPipeline(50, 2)
 
 	fmt.Println("Computed: ", res)
 

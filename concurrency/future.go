@@ -26,12 +26,23 @@ func NewFutureForString() *FutureForString {
 }
 
 func (fut *FutureForString) Success(f OnSuccessFunc) *FutureForString {
-	fut.successFunc = f
+	// We don't want to check later if it's set or not
+	if f == nil {
+		fut.successFunc = dummySuccessFunc
+	} else {
+		fut.successFunc = f
+	}
+	
 	return fut
 }
 
 func (fut *FutureForString) Fail(f OnErrorFunc) *FutureForString {
-	fut.failFunc = f
+	if f == nil {
+		fut.failFunc = dummyErrorFunc
+	} else {
+		fut.failFunc = f
+	}
+	
 	return fut
 }
 
