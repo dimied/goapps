@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 )
 
@@ -108,21 +111,15 @@ func main() {
 	fmt.Println("Normal ", v.asString())
 	fmt.Println("Embedded ", vs.asString())
 
+
+
 	fmt.Println("Error: ", MyError)
 	customErr := MyCustomError{}
 	customErr.code = 1
 	customErr.msg = "Bla bla"
 	fmt.Println("Error: ", customErr)
 
-	// Using maps as sets, no value, we are only interested in keys
-	mySet := make(map[string]struct{})
-	mySet["Hallo"] = struct{}{}
-	mySet["Hallo du da"] = struct{}{}
-	mySet["Hallo"] = struct{}{}
-	fmt.Println("My first set", mySet)
-
-	_, ok := mySet["Hallo"]
-	fmt.Println("Element found ", ok)
+	useMaps()
 	
 	printGlobals()
 
@@ -169,6 +166,38 @@ func lastValueReturn(v int) (r int) {
 		r = 1
 	}
 	return // here r is returned
+}
+
+func useMapsAsSets() {
+	// Using maps as sets, no value, we are only interested in keys
+	mySet := make(map[string]struct{})
+	mySet["Hallo"] = struct{}{}
+	mySet["Hallo du da"] = struct{}{}
+	mySet["Hallo"] = struct{}{}
+	fmt.Println("My first set", mySet)
+
+	_, ok := mySet["Hallo"]
+	fmt.Println("Element found ", ok)
+}
+
+func useMaps() {
+	useMapsAsSets()
+
+	// Use interface as key type
+	outputMap := make(map[io.Writer]bool)
+	byteBuffer := new(bytes.Buffer)
+
+	outputMap[os.Stdout] = true
+	outputMap[os.Stderr] = true
+	outputMap[byteBuffer] = true
+
+	for writer, value := range outputMap {
+		if value {
+			fmt.Fprintf(writer, "My message\n")
+		}
+	}
+
+	fmt.Print("In buffer: ", byteBuffer.String())
 }
 
 func printGlobals() {
