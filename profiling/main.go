@@ -7,6 +7,16 @@ import (
 	"runtime"
 	"os"
 )
+/*
+To generate profiles, you can use 
+-cpuprofile=$FILE
+-memprofile=$FILE
+-blockprofile=$FILE
+# -run=XXX disables tests
+go test -run=XXX -bench=. -cpuprofile=myprof.p someapp
+go tool pprof someapp myprof.p
+*/
+
 
 func addText(input string) string{
 	return input+" Hallo"
